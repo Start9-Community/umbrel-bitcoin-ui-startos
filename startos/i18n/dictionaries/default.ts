@@ -6,6 +6,7 @@ const dict = {
   'Web Interface': 1,
   'The web interface is ready': 2,
   'The web interface is not ready': 3,
+  'Bitcoin Knots is not yet reachable on the internal network.': 7,
 
   // interfaces.ts
   'Web UI': 4,

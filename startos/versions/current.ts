@@ -1,16 +1,13 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '1.1.0:9',
+  version: '1.1.0:10',
   releaseNotes: {
-    en_US: 'Update to the latest packaging template and start-sdk 1.5.3.',
-    es_ES:
-      'Actualización a la última plantilla de empaquetado y start-sdk 1.5.3.',
-    de_DE:
-      'Aktualisierung auf die neueste Packaging-Vorlage und start-sdk 1.5.3.',
-    pl_PL: 'Aktualizacja do najnowszego szablonu pakowania i start-sdk 1.5.3.',
-    fr_FR:
-      "Mise à jour vers le dernier modèle d'empaquetage et start-sdk 1.5.3.",
+    en_US: 'Internal updates (start-sdk 2.0.x)',
+    es_ES: 'Actualizaciones internas (start-sdk 2.0.x)',
+    de_DE: 'Interne Aktualisierungen (start-sdk 2.0.x)',
+    pl_PL: 'Aktualizacje wewnętrzne (start-sdk 2.0.x)',
+    fr_FR: 'Mises à jour internes (start-sdk 2.0.x)',
   },
   migrations: {
     up: async ({ effects }) => {},

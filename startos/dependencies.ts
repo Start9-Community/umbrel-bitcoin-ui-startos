@@ -6,9 +6,8 @@ export const setDependencies = sdk.setupDependencies(async ({ effects }) => {
   await sdk.action.createTask(effects, 'bitcoind', autoconfig, 'critical', {
     input: {
       kind: 'partial',
-      value: {
-        zmqEnabled: true,
-      },
+      accept: [{ zmqEnabled: true }],
+      set: { zmqEnabled: true },
     },
     when: { condition: 'input-not-matches', once: false },
     reason: i18n(
@@ -19,7 +18,7 @@ export const setDependencies = sdk.setupDependencies(async ({ effects }) => {
   return {
     bitcoind: {
       kind: 'running',
-      versionRange: '>=28.3',
+      versionRange: '>=28.4:13',
       healthChecks: ['bitcoind'],
     },
   }

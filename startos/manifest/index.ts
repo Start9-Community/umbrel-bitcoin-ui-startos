@@ -5,7 +5,7 @@ export const manifest = setupManifest({
   id: 'umbrel-bitcoin-ui',
   title: 'Umbrel Bitcoin UI',
   license: 'PolyForm Noncommercial License 1.0.0',
-  packageRepo: 'https://github.com/Retropex/umbrel-bitcoin-ui-startos',
+  packageRepo: 'https://github.com/Start9-Community/umbrel-bitcoin-ui-startos',
   upstreamRepo: 'https://github.com/Retropex/umbrel-bitcoin.git',
   marketingUrl: 'https://github.com/Retropex/umbrel-bitcoin.git',
   donationUrl: null,

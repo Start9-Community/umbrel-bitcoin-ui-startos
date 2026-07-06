@@ -1,6 +1,6 @@
 # Updating the upstream version
 
-This package builds the UI from [`Retropex/umbrel-bitcoin`](https://github.com/Retropex/umbrel-bitcoin), a fork of Umbrel's Bitcoin app adapted to run against a StartOS-managed Bitcoin Knots node. The source is vendored as a git submodule at [`umbrel-bitcoin/`](./umbrel-bitcoin), pinned to the fork's `startos` branch. "Upstream" here means that fork.
+This package builds the UI from [`Retropex/umbrel-bitcoin`](https://github.com/Retropex/umbrel-bitcoin), a fork of Umbrel's Bitcoin app adapted to run against a StartOS-managed Bitcoin node. The source is vendored as a git submodule at [`umbrel-bitcoin/`](./umbrel-bitcoin), pinned to the fork's `startos` branch. "Upstream" here means that fork.
 
 ## Determining the upstream version
 

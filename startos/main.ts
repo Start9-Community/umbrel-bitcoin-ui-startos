@@ -1,32 +1,26 @@
 import { sdk } from './sdk'
-import { uiPort } from './utils'
+import { bridgeAddress, uiPort } from './utils'
 import { i18n } from './i18n'
 import { manifest } from 'bitcoin-knots-startos/startos/manifest'
-import { rpcHostId, rpcInterfaceId } from 'bitcoin-knots-startos/startos/utils'
+import { rpcHostId, rpcPort } from 'bitcoin-knots-startos/startos/utils'
 
 export const main = sdk.setupMain(async ({ effects }) => {
   console.info(i18n('Starting Umbrel UI.'))
 
-  // Knots' RPC and both ZMQ interfaces share one container, so its RPC host's
-  // IPv4 bridge address is the single IP the UI needs for RPC and the two ZMQ
-  // ports — replaces the removed `bitcoind.startos` DNS name.
-  const bitcoindIp = await sdk.host
-    .get(effects, { hostId: rpcHostId, packageId: 'bitcoind' }, (host) => {
-      const iface =
-        host &&
-        Object.values(host.bindings)
-          .flatMap((b) => Object.values(b.interfaces))
-          .find((i) => i.id === rpcInterfaceId)
-      return iface?.addressInfo
-        .filter({ kind: 'bridge', predicate: (h) => h.metadata.kind === 'ipv4' })
-        .hostnames[0]?.hostname
-    })
-    .const()
-
-  if (!bitcoindIp)
-    throw new Error(
-      i18n('Bitcoin Knots is not yet reachable on the internal network.'),
-    )
+  // Knots' RPC and both ZMQ interfaces share one container, so the host of its
+  // RPC bridge address is the single IP the UI dials for RPC (8332) and the two
+  // ZMQ ports (28332/28333) — replaces the removed `bitcoind.startos` DNS name.
+  // Reading the RPC binding's assigned port (never addressInfo, which empties
+  // on a disabled binding) keeps this .const() reactive to Knots
+  // install/uninstall — one healing restart each — while never restarting on a
+  // Knots update. Loopback placeholder until Knots binds; the .const() heals
+  // when it appears.
+  const bitcoindAddress = await bridgeAddress(effects, {
+    packageId: 'bitcoind',
+    hostId: rpcHostId,
+    internalPort: rpcPort,
+  }).const()
+  const bitcoindIp = bitcoindAddress?.split(':')[0] ?? '127.0.0.1'
 
   return sdk.Daemons.of(effects).addDaemon('primary', {
     subcontainer: sdk.SubContainer.of(

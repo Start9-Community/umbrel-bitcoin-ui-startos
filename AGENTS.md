@@ -11,7 +11,7 @@ Work this package's `TODO.md` from top to bottom. Keep `README.md` (architecture
 ## This repo
 
 - **Package id is `umbrel-bitcoin-ui`.** UI-only package: it ships no bitcoind of its own but hard-depends on Bitcoin Knots (dependency packageId `bitcoind`) for RPC + ZMQ. The UI source is vendored as a git submodule at `umbrel-bitcoin/`.
-- **Reaching the node goes through the LXC bridge, not `.startos` DNS.** `main.ts` resolves bitcoind's IPv4 bridge address from its **RPC host** (`sdk.host.get` with a map fn) and passes it as `BITCOIND_IP`; RPC, ZMQ block, and ZMQ tx all share that one container IP. The `rpcHostId`/`rpcInterfaceId` constants are imported from `bitcoin-knots-startos/startos/utils`, not hardcoded.
+- **Reaching the node goes through the LXC bridge, not `.startos` DNS.** `main.ts` resolves bitcoind's IPv4 bridge address via the `bridgeAddress` helper (`startos/utils.ts`) against its **RPC host** and passes the host part as `BITCOIND_IP`; RPC (8332), ZMQ block, and ZMQ tx all share that one container IP. The helper's `.const()` reads the RPC binding's **assigned port** (never `addressInfo`, which empties on a disabled binding), so the UI heals on Knots install/uninstall — one restart each — with zero restarts on Knots updates; a loopback placeholder covers the pre-install window. The `rpcHostId`/`rpcPort` constants are imported from `bitcoin-knots-startos/startos/utils`, not hardcoded.
 
 ## Inspecting a running install
 

@@ -45,7 +45,7 @@ The daemon runs with these environment variables set, wiring it to the StartOS-m
 | Env var                  | Value                | Purpose                                      |
 | ------------------------ | -------------------- | -------------------------------------------- |
 | `BITCOIND_EXTERNAL_MODE` | `true`               | Connect to an external node, don't spawn one |
-| `BITCOIND_IP`            | `bitcoind.startos`   | LAN hostname of the node dependency          |
+| `BITCOIND_IP`            | node's LXC-bridge IP | IPv4 bridge address of the node dependency, resolved from bitcoind's RPC host at startup |
 | `RPC_COOKIE`             | `/mnt/knots/.cookie` | RPC cookie read from the node's volume       |
 | `ZMQ_HASHBLOCK_PORT`     | `28332`              | ZMQ block notifications                      |
 | `ZMQ_HASHTX_PORT`        | `28333`              | ZMQ transaction notifications                |
@@ -153,7 +153,7 @@ dependencies:
     auto_config: { zmqEnabled: true } # critical task on the node
 startos_managed_env_vars:
   - BITCOIND_EXTERNAL_MODE=true
-  - BITCOIND_IP=bitcoind.startos
+  - BITCOIND_IP=<node's LXC-bridge IPv4, resolved at startup>
   - RPC_COOKIE=/mnt/knots/.cookie
   - ZMQ_HASHBLOCK_PORT=28332
   - ZMQ_HASHTX_PORT=28333

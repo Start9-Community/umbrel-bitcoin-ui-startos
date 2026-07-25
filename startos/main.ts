@@ -1,5 +1,5 @@
 import { sdk } from './sdk'
-import { bridgeAddress, uiPort } from './utils'
+import { uiPort } from './utils'
 import { i18n } from './i18n'
 import { manifest } from 'bitcoin-knots-startos/startos/manifest'
 import { rpcHostId, rpcPort } from 'bitcoin-knots-startos/startos/utils'
@@ -16,11 +16,14 @@ export const main = sdk.setupMain(async ({ effects }) => {
   // Bitcoin update. While the node is absent the address is null and
   // BITCOIND_IP is omitted; the .const() heals in the real address when it
   // appears.
-  const bitcoindAddress = await bridgeAddress(effects, {
-    packageId: 'bitcoind',
-    hostId: rpcHostId,
-    internalPort: rpcPort,
-  }).const()
+  const bitcoindAddress = await sdk.host
+    .getBridgeAddress(effects, {
+      packageId: 'bitcoind',
+      hostId: rpcHostId,
+      internalPort: rpcPort,
+      ssl: false,
+    })
+    .const()
   const bitcoindIp = bitcoindAddress?.split(':')[0]
 
   return sdk.Daemons.of(effects).addDaemon('primary', {

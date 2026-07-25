@@ -10,7 +10,7 @@ A StartOS package that runs the [Umbrel Bitcoin](https://github.com/Retropex/umb
 
 ## Getting Started
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for build and development instructions, and [UPDATING.md](UPDATING.md) for bumping the vendored UI source.
+Build and development workflow follow the StartOS packaging guide: <https://docs.start9.com/packaging>. Keep `README.md`, `instructions.md`, and `AGENTS.md` in sync with any change to user-visible behavior or package structure. See [UPDATING.md](UPDATING.md) for bumping the vendored UI source.
 
 ---
 
@@ -131,7 +131,7 @@ On install/update the package creates a **critical** task on the node to enable 
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for build instructions and development workflow.
+Build and development workflow follow the StartOS packaging guide: <https://docs.start9.com/packaging>. Keep `README.md`, `instructions.md`, and `AGENTS.md` in sync with any change to user-visible behavior or package structure.
 
 ---
 

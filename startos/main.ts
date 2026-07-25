@@ -7,15 +7,10 @@ import { rpcHostId, rpcPort } from 'bitcoin-knots-startos/startos/utils'
 export const main = sdk.setupMain(async ({ effects }) => {
   console.info(i18n('Starting Umbrel UI.'))
 
-  // Bitcoin's RPC and both ZMQ interfaces share one container, so the host of
-  // its RPC bridge address is the single IP the UI dials for RPC (8332) and the
-  // two ZMQ ports (28332/28333) — replaces the removed `bitcoind.startos` DNS
-  // name. Reading the RPC binding's assigned port (never addressInfo, which
-  // empties on a disabled binding) keeps this .const() reactive to Bitcoin
-  // install/uninstall — one healing restart each — while never restarting on a
-  // Bitcoin update. While the node is absent the address is null and
-  // BITCOIND_IP is omitted; the .const() heals in the real address when it
-  // appears.
+  // Bitcoin serves RPC and both ZMQ ports from one container, so the host of
+  // its RPC bridge address is the single IP the UI dials for all three.
+  // `ssl: false` takes the plaintext leg of the RPC binding, which is
+  // `protocol: 'http'` and so publishes both.
   const bitcoindAddress = await sdk.host
     .getBridgeAddress(effects, {
       packageId: 'bitcoind',

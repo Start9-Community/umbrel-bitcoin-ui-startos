@@ -4,7 +4,7 @@ Umbrel Bitcoin UI gives your StartOS Bitcoin node the familiar Umbrel-style dash
 
 ## Before you start
 
-This is a **front end only**. It does not run a Bitcoin node itself; it connects to one already installed on your server. Before starting Umbrel Bitcoin UI you must have a Bitcoin node (**Bitcoin Knots** or **Bitcoin Core**) installed and running.
+This is a **front end only**. It does not run a Bitcoin node itself; it connects to one already installed on your server. Before starting Umbrel Bitcoin UI you must have a **Bitcoin** node installed and running.
 
 StartOS handles the wiring for you:
 

@@ -5,26 +5,35 @@ import { manifest } from 'bitcoin-knots-startos/startos/manifest'
 import {
   rpcHostId,
   rpcPort,
+  zmqHostId,
   zmqPortBlock,
   zmqPortTransaction,
 } from 'bitcoin-knots-startos/startos/utils'
 
+const bridgePort = (address: string | null) => address?.split(':')[1]
+
 export const main = sdk.setupMain(async ({ effects }) => {
   console.info(i18n('Starting Umbrel UI.'))
 
-  // The bridge address is the OS gateway plus the port StartOS assigned to the
-  // binding, which only prefers — never guarantees — Bitcoin's own 8332, so both
-  // halves have to be carried through. `ssl: false` takes the plaintext leg of
-  // the RPC binding, which is `protocol: 'http'` and so publishes both.
-  const bitcoindAddress = await sdk.host
-    .getBridgeAddress(effects, {
+  // Every bridge address is the OS gateway plus the port StartOS assigned to
+  // that binding, which only prefers — never guarantees — Bitcoin's own port
+  // number, so each one has to be carried through. RPC, ZMQ block and ZMQ tx are
+  // three separate bindings sharing the one gateway host. `ssl: false` takes the
+  // plaintext leg of the RPC binding, which is `protocol: 'http'` and so
+  // publishes both; the ZMQ bindings publish a single plaintext leg each.
+  const bridge = (hostId: string, internalPort: number, ssl?: boolean) =>
+    sdk.host.getBridgeAddress(effects, {
       packageId: 'bitcoind',
-      hostId: rpcHostId,
-      internalPort: rpcPort,
-      ssl: false,
+      hostId,
+      internalPort,
+      ssl,
     })
-    .const()
-  const [bitcoindIp, bitcoindRpcPort] = bitcoindAddress?.split(':') ?? []
+
+  const rpcAddress = await bridge(rpcHostId, rpcPort, false).const()
+  const zmqBlockAddress = await bridge(zmqHostId, zmqPortBlock).const()
+  const zmqTxAddress = await bridge(zmqHostId, zmqPortTransaction).const()
+
+  const [bitcoindIp, bitcoindRpcPort] = rpcAddress?.split(':') ?? []
 
   return sdk.Daemons.of(effects).addDaemon('primary', {
     subcontainer: sdk.SubContainer.of(
@@ -50,12 +59,14 @@ export const main = sdk.setupMain(async ({ effects }) => {
       command: [
         'env',
         'BITCOIND_EXTERNAL_MODE=true',
-        // The ZMQ subscribers dial `bitcoind.startos` rather than BITCOIND_IP,
-        // so they reach the container directly and take Bitcoin's own ports.
-        `ZMQ_HASHTX_PORT=${zmqPortTransaction}`,
-        `ZMQ_HASHBLOCK_PORT=${zmqPortBlock}`,
         ...(bitcoindIp
           ? [`BITCOIND_IP=${bitcoindIp}`, `RPC_PORT=${bitcoindRpcPort}`]
+          : []),
+        ...(zmqBlockAddress
+          ? [`ZMQ_HASHBLOCK_PORT=${bridgePort(zmqBlockAddress)}`]
+          : []),
+        ...(zmqTxAddress
+          ? [`ZMQ_HASHTX_PORT=${bridgePort(zmqTxAddress)}`]
           : []),
         'RPC_COOKIE=/mnt/knots/.cookie',
         'node',

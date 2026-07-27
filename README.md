@@ -33,22 +33,25 @@ Build and development workflow follow the StartOS packaging guide: <https://docs
 
 ## Image and Container Runtime
 
-| Property      | Value                                                                                               |
-| ------------- | --------------------------------------------------------------------------------------------------- |
-| Image         | `umbrel-bitcoin-ui` — built locally from [`Dockerfile`](./Dockerfile)                               |
-| Source        | git submodule [`umbrel-bitcoin/`](./umbrel-bitcoin) (`startos` branch of `Retropex/umbrel-bitcoin`) |
-| Architectures | x86_64, aarch64                                                                                     |
-| Command       | `node /app/dist/server.js`                                                                          |
+| Property      | Value                                                                                                                                                  |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Image         | `umbrel-bitcoin-ui` — built locally from [`Dockerfile`](./Dockerfile)                                                                                  |
+| Source        | git submodule [`umbrel-bitcoin/`](./umbrel-bitcoin) (`start-os-next` branch of `Start9-Community/umbrel-bitcoin`, a fork of `Retropex/umbrel-bitcoin`) |
+| Architectures | x86_64, aarch64                                                                                                                                        |
+| Command       | `node /app/dist/server.js`                                                                                                                             |
 
 The daemon runs with these environment variables set, wiring it to the StartOS-managed node:
 
-| Env var                  | Value                | Purpose                                                                                  |
-| ------------------------ | -------------------- | ---------------------------------------------------------------------------------------- |
-| `BITCOIND_EXTERNAL_MODE` | `true`               | Connect to an external node, don't spawn one                                             |
-| `BITCOIND_IP`            | node's LXC-bridge IP | IPv4 bridge address of the node dependency, resolved from bitcoind's RPC host at startup |
-| `RPC_COOKIE`             | `/mnt/knots/.cookie` | RPC cookie read from the node's volume                                                   |
-| `ZMQ_HASHBLOCK_PORT`     | `28332`              | ZMQ block notifications                                                                  |
-| `ZMQ_HASHTX_PORT`        | `28333`              | ZMQ transaction notifications                                                            |
+| Env var                  | Value                    | Purpose                                                                                  |
+| ------------------------ | ------------------------ | ---------------------------------------------------------------------------------------- |
+| `BITCOIND_EXTERNAL_MODE` | `true`                   | Connect to an external node, don't spawn one                                             |
+| `BITCOIND_IP`            | OS bridge gateway IPv4   | Host half of the node's RPC bridge address, resolved from bitcoind's RPC host at startup |
+| `RPC_PORT`               | node's assigned RPC port | Port half of that same address — the external port StartOS published the RPC binding on  |
+| `RPC_COOKIE`             | `/mnt/knots/.cookie`     | RPC cookie read from the node's volume                                                   |
+| `ZMQ_HASHBLOCK_PORT`     | node's assigned ZMQ port | Port of the node's ZMQ block binding on the bridge                                       |
+| `ZMQ_HASHTX_PORT`        | node's assigned ZMQ port | Port of the node's ZMQ transaction binding on the bridge                                 |
+
+Everything reaches the node over the LXC bridge, where the OS DNATs `<bridge gateway>:<assigned external port>` to the node's container. RPC, ZMQ block and ZMQ transaction are three separate bindings on that one gateway host, so all three ports are resolved individually — the external port a binding gets is only _preferred_ to match the node's own port number and must never be assumed.
 
 ---
 
@@ -118,7 +121,7 @@ None.
 | ---------- | --------------------------------------------------------------- |
 | `bitcoind` | Running and healthy. Provided by Bitcoin Knots or Bitcoin Core. |
 
-On install/update the package creates a **critical** task on the node to enable **ZMQ** (`zmqEnabled: true`) — the UI needs ZMQ (ports 28332/28333) for live block and transaction updates. It also reads the node's RPC cookie at `/mnt/knots/.cookie`.
+On install/update the package creates a **critical** task on the node to enable **ZMQ** (`zmqEnabled: true`) — the UI needs the node's ZMQ block and transaction bindings for live updates, and they are not published at all while ZMQ is off. It also reads the node's RPC cookie at `/mnt/knots/.cookie`.
 
 ---
 
@@ -140,7 +143,7 @@ Build and development workflow follow the StartOS packaging guide: <https://docs
 ```yaml
 package_id: umbrel-bitcoin-ui
 image: umbrel-bitcoin-ui # built from ./Dockerfile
-upstream: https://github.com/Retropex/umbrel-bitcoin # vendored as git submodule (startos branch)
+upstream: https://github.com/Retropex/umbrel-bitcoin # vendored via the Start9-Community fork, git submodule (start-os-next branch)
 architectures: [x86_64, aarch64]
 volumes:
   main: /root
@@ -153,9 +156,10 @@ dependencies:
     auto_config: { zmqEnabled: true } # critical task on the node
 startos_managed_env_vars:
   - BITCOIND_EXTERNAL_MODE=true
-  - BITCOIND_IP=<node's LXC-bridge IPv4, resolved at startup>
+  - BITCOIND_IP=<host half of the node's RPC bridge address, resolved at startup>
+  - RPC_PORT=<port half of that address, i.e. the node's assigned external RPC port>
   - RPC_COOKIE=/mnt/knots/.cookie
-  - ZMQ_HASHBLOCK_PORT=28332
-  - ZMQ_HASHTX_PORT=28333
+  - ZMQ_HASHBLOCK_PORT=<the node's assigned external port for its ZMQ block binding>
+  - ZMQ_HASHTX_PORT=<the node's assigned external port for its ZMQ transaction binding>
 actions: none
 ```

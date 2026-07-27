@@ -42,13 +42,16 @@ Build and development workflow follow the StartOS packaging guide: <https://docs
 
 The daemon runs with these environment variables set, wiring it to the StartOS-managed node:
 
-| Env var                  | Value                | Purpose                                                                                  |
-| ------------------------ | -------------------- | ---------------------------------------------------------------------------------------- |
-| `BITCOIND_EXTERNAL_MODE` | `true`               | Connect to an external node, don't spawn one                                             |
-| `BITCOIND_IP`            | node's LXC-bridge IP | IPv4 bridge address of the node dependency, resolved from bitcoind's RPC host at startup |
-| `RPC_COOKIE`             | `/mnt/knots/.cookie` | RPC cookie read from the node's volume                                                   |
-| `ZMQ_HASHBLOCK_PORT`     | `28332`              | ZMQ block notifications                                                                  |
-| `ZMQ_HASHTX_PORT`        | `28333`              | ZMQ transaction notifications                                                            |
+| Env var                  | Value                    | Purpose                                                                                  |
+| ------------------------ | ------------------------ | ---------------------------------------------------------------------------------------- |
+| `BITCOIND_EXTERNAL_MODE` | `true`                   | Connect to an external node, don't spawn one                                             |
+| `BITCOIND_IP`            | OS bridge gateway IPv4   | Host half of the node's RPC bridge address, resolved from bitcoind's RPC host at startup |
+| `RPC_PORT`               | node's assigned RPC port | Port half of that same address — the external port StartOS published the RPC binding on  |
+| `RPC_COOKIE`             | `/mnt/knots/.cookie`     | RPC cookie read from the node's volume                                                   |
+| `ZMQ_HASHBLOCK_PORT`     | `28332`                  | ZMQ block notifications, on the node's own port                                          |
+| `ZMQ_HASHTX_PORT`        | `28333`                  | ZMQ transaction notifications, on the node's own port                                    |
+
+RPC and ZMQ take different routes to the node. RPC goes over the LXC bridge, where the OS DNATs `<bridge gateway>:<assigned external port>` to the node's container — so the assigned port must be carried through, not assumed to equal the node's own `8332`. The UI's ZMQ subscribers ignore `BITCOIND_IP` and dial `bitcoind.startos` directly, reaching the container itself, where the node's own ZMQ ports apply.
 
 ---
 
@@ -153,9 +156,10 @@ dependencies:
     auto_config: { zmqEnabled: true } # critical task on the node
 startos_managed_env_vars:
   - BITCOIND_EXTERNAL_MODE=true
-  - BITCOIND_IP=<node's LXC-bridge IPv4, resolved at startup>
+  - BITCOIND_IP=<host half of the node's RPC bridge address, resolved at startup>
+  - RPC_PORT=<port half of that address, i.e. the node's assigned external RPC port>
   - RPC_COOKIE=/mnt/knots/.cookie
-  - ZMQ_HASHBLOCK_PORT=28332
-  - ZMQ_HASHTX_PORT=28333
+  - ZMQ_HASHBLOCK_PORT=28332 # the node's own port, reached at bitcoind.startos
+  - ZMQ_HASHTX_PORT=28333 # the node's own port, reached at bitcoind.startos
 actions: none
 ```

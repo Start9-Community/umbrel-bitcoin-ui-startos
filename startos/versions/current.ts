@@ -1,23 +1,23 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '1.1.0:13',
+  version: '1.1.0:14',
   releaseNotes: {
-    en_US: `Resolves the addresses of connected services more reliably.
+    en_US: `Connects to your Bitcoin node on the port StartOS actually published.
 
-Umbrel Bitcoin UI looked up where to reach its dependencies through a field that only applies to one of the two ways a service can publish a port. It now reads the address itself, so a dependency changing how it serves TLS can no longer leave Umbrel Bitcoin UI unable to find it. Nothing changes in normal operation.`,
-    es_ES: `Resuelve de forma más fiable las direcciones de los servicios conectados.
+Umbrel Bitcoin UI resolved where to reach the node's RPC but then dialled Bitcoin's own port number instead of the one StartOS assigned to it. The two usually match, and where they don't the UI could not reach the node at all. It now uses the assigned port.`,
+    es_ES: `Se conecta a tu nodo Bitcoin en el puerto que StartOS ha publicado realmente.
 
-Umbrel Bitcoin UI localizaba sus dependencias mediante un campo que solo se aplica a una de las dos formas en que un servicio puede publicar un puerto. Ahora lee la dirección en sí, de modo que si una dependencia cambia su forma de servir TLS, Umbrel Bitcoin UI seguirá encontrándola. En funcionamiento normal no cambia nada.`,
-    de_DE: `Ermittelt die Adressen verbundener Dienste zuverlässiger.
+Umbrel Bitcoin UI localizaba el RPC del nodo, pero luego usaba el número de puerto propio de Bitcoin en lugar del que StartOS le había asignado. Normalmente coinciden, y cuando no, la interfaz no podía alcanzar el nodo. Ahora utiliza el puerto asignado.`,
+    de_DE: `Verbindet sich mit deinem Bitcoin-Knoten über den Port, den StartOS tatsächlich veröffentlicht hat.
 
-Umbrel Bitcoin UI suchte seine Abhängigkeiten über ein Feld, das nur für eine der beiden Arten gilt, auf die ein Dienst einen Port veröffentlichen kann. Jetzt wird die Adresse selbst gelesen, sodass eine Abhängigkeit, die ihre TLS-Bereitstellung ändert, für Umbrel Bitcoin UI auffindbar bleibt. Im normalen Betrieb ändert sich nichts.`,
-    pl_PL: `Pewniej ustala adresy połączonych usług.
+Umbrel Bitcoin UI ermittelte zwar die RPC-Adresse des Knotens, verwendete dann aber Bitcoins eigene Portnummer statt der von StartOS zugewiesenen. Beide stimmen meist überein; wo nicht, erreichte die Oberfläche den Knoten gar nicht. Jetzt wird der zugewiesene Port verwendet.`,
+    pl_PL: `Łączy się z węzłem Bitcoin na porcie, który faktycznie opublikował StartOS.
 
-Umbrel Bitcoin UI wyszukiwał swoje zależności przez pole, które dotyczy tylko jednego z dwóch sposobów publikowania portu przez usługę. Teraz odczytuje sam adres, więc zależność zmieniająca sposób udostępniania TLS nadal pozostanie odnajdywalna dla Umbrel Bitcoin UI. W normalnej pracy nic się nie zmienia.`,
-    fr_FR: `Détermine plus fiablement les adresses des services connectés.
+Umbrel Bitcoin UI ustalał adres RPC węzła, ale następnie używał własnego numeru portu Bitcoina zamiast tego przypisanego przez StartOS. Zwykle są takie same, a gdy nie były, interfejs w ogóle nie mógł połączyć się z węzłem. Teraz używany jest port przypisany.`,
+    fr_FR: `Se connecte à votre nœud Bitcoin sur le port réellement publié par StartOS.
 
-Umbrel Bitcoin UI localisait ses dépendances via un champ qui ne s'applique qu'à l'un des deux modes de publication d'un port par un service. Il lit désormais l'adresse elle-même : une dépendance qui change sa façon de servir TLS reste donc trouvable par Umbrel Bitcoin UI. Rien ne change en fonctionnement normal.`,
+Umbrel Bitcoin UI déterminait l'adresse RPC du nœud, puis utilisait le numéro de port propre à Bitcoin au lieu de celui attribué par StartOS. Les deux coïncident généralement ; sinon, l'interface ne pouvait pas joindre le nœud du tout. Le port attribué est désormais utilisé.`,
   },
   migrations: {
     up: async ({ effects }) => {},

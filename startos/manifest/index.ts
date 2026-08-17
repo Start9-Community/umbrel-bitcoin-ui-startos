@@ -9,7 +9,6 @@ export const manifest = setupManifest({
   upstreamRepo: 'https://github.com/Retropex/umbrel-bitcoin.git',
   marketingUrl: 'https://github.com/Retropex/umbrel-bitcoin.git',
   donationUrl: null,
-  docsUrls: ['https://github.com/Retropex/umbrel-bitcoin.git'],
   description: { short, long },
   volumes: ['main'],
   images: {

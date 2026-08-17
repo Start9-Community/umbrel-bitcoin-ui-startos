@@ -1,13 +1,15 @@
 # Updating the upstream version
 
-This package builds the UI from [`Retropex/umbrel-bitcoin`](https://github.com/Retropex/umbrel-bitcoin), a fork of Umbrel's Bitcoin app adapted to run against a StartOS-managed Bitcoin node. The source is vendored as a git submodule at [`umbrel-bitcoin/`](./umbrel-bitcoin), pinned to the fork's **`start-os-next`** branch. "Upstream" here means that fork.
+This package builds the UI from [`Start9-Community/umbrel-bitcoin`](https://github.com/Start9-Community/umbrel-bitcoin) — our fork of [`Retropex/umbrel-bitcoin`](https://github.com/Retropex/umbrel-bitcoin), which is itself a fork of Umbrel's Bitcoin app adapted to run against a StartOS-managed Bitcoin node. The source is vendored as a git submodule at [`umbrel-bitcoin/`](./umbrel-bitcoin), pinned to the **`start-os-next`** branch (see `.gitmodules`). "Upstream" here means our fork; anything sent to Retropex has to be mirrored into it.
+
+> Once Retropex carries the `.startos` removal our fork exists for, move the submodule url back and track theirs again.
 
 > [!WARNING]
-> **The tracked branch is `start-os-next`, not `startos`.** The fork carries both, and `start-os-next` is the one ahead — it is where the StartOS-targeted work actually lands (the vendored commit `f21b1c3` is its head, two commits ahead of `startos`). Querying `origin/startos` returns an *older* commit, so treating it as the tracked branch reads as a new version and silently proposes a **downgrade**. `.gitmodules` names `start-os-next`; keep any command you run consistent with it.
+> **The tracked branch is `start-os-next`, not `startos`.** The fork carries both, and `start-os-next` is the one ahead — it is where the StartOS-targeted work actually lands (the vendored commit `f21b1c3` is its head, two commits ahead of `startos`). Querying `origin/startos` returns an _older_ commit, so treating it as the tracked branch reads as a new version and silently proposes a **downgrade**. `.gitmodules` names `start-os-next`; keep any command you run consistent with it.
 
 ## Determining the upstream version
 
-- **umbrel-bitcoin** ([Retropex/umbrel-bitcoin](https://github.com/Retropex/umbrel-bitcoin), branch `start-os-next`) — check the latest commit or tag on the tracked branch:
+- **umbrel-bitcoin** ([Start9-Community/umbrel-bitcoin](https://github.com/Start9-Community/umbrel-bitcoin), branch `start-os-next`) — check the latest commit or tag on the tracked branch:
 
   ```sh
   git -C umbrel-bitcoin fetch origin start-os-next

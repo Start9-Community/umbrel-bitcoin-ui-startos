@@ -1,14 +1,14 @@
 import { sdk } from './sdk'
 import { uiPort } from './utils'
 import { i18n } from './i18n'
-import { manifest } from 'bitcoin-knots-startos/startos/manifest'
+import { manifest } from 'bitcoin-core-startos/startos/manifest'
 import {
   rpcHostId,
   rpcPort,
   zmqHostId,
   zmqPortBlock,
   zmqPortTransaction,
-} from 'bitcoin-knots-startos/startos/utils'
+} from 'bitcoin-core-startos/startos/utils'
 
 const bridgePort = (address: string | null) => address?.split(':')[1]
 

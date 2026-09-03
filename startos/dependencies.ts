@@ -1,4 +1,4 @@
-import { autoconfig } from 'bitcoin-knots-startos/startos/actions/config/autoconfig'
+import { autoconfig } from 'bitcoin-core-startos/startos/actions/config/autoconfig'
 import { i18n } from './i18n'
 import { sdk } from './sdk'
 

@@ -78,9 +78,9 @@ Four of those values are **resolved at start rather than fixed**: the node's add
 
 One, and it is required.
 
-| Dependency | Required | Health checks required | Mounted                           | Why                    |
-| ---------- | -------- | ---------------------- | --------------------------------- | ---------------------- |
-| Bitcoin    | Yes      | `bitcoind`             | `main`, read-only at `/mnt/knots` | Everything it displays |
+| Dependency | Required | Version                                                                                          | Health checks required | Mounted                           | Why                    |
+| ---------- | -------- | ------------------------------------------------------------------------------------------------ | ---------------------- | --------------------------------- | ---------------------- |
+| Bitcoin    | Yes      | 28.4:29, 29.4:16, 30.3:16 or 31.1:16 and later, per major line; Bitcoin Knots (pre-RDTS) 29.3:29+ | `bitcoind`             | `main`, read-only at `/mnt/knots` | Everything it displays |
 
 **This package also configures the node on your behalf.** The live block and transaction updates depend on ZeroMQ, which Bitcoin does not enable by default — so the package raises a `critical` task **on the Bitcoin package**, pre-filled to turn ZeroMQ on and locked to that single change.
 
@@ -97,6 +97,8 @@ One interface.
 | Web UI    | `ui` | ui   | 3000 | The dashboard |
 
 Bound on the `ui-multi` MultiHost over HTTP and not masked.
+
+**The StartOS 0.3.5 package's host `main` is retired** by the `1.1.0:15` migration, which frees its port. Addresses attached to it are not carried over; the user adds them to the Web UI interface.
 
 **There is no login of any kind** — not the application's, and none added by StartOS. Anyone who can reach the address sees your node's state. The dashboard is read-only with respect to the chain, but it does hold RPC access to your node.
 
@@ -173,7 +175,7 @@ startos_managed_env_vars:
   - ZMQ_HASHTX_PORT
   - RPC_COOKIE
 dependencies:
-  - bitcoind # required, kind: running, healthChecks: [bitcoind], cookie via a read-only mount
+  - bitcoind # required, kind: running, healthChecks: [bitcoind], cookie via a read-only mount; >=28.4:29 / 29.4:16 / 30.3:16 / 31.1:16 per major line, or Knots (pre-RDTS) >=29.3:29
 interfaces:
   ui: { type: ui, port: 3000 } # no authentication of any kind
 actions: []

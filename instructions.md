@@ -8,7 +8,7 @@ This is a **front end only**. It does not run a Bitcoin node itself; it connects
 
 StartOS handles the wiring for you:
 
-- It marks your Bitcoin node as a required dependency and won't let the UI run without one.
+- It marks your Bitcoin node as a required dependency and won't let the UI run without one. Bitcoin must be at least version 28.4:29, 29.4:16, 30.3:16 or 31.1:16, depending on its major version. Bitcoin Knots (pre-RDTS) 29.3:29 or later also works.
 - It automatically enables **ZMQ** on that node — the UI needs it for live block and transaction updates. You may see your Bitcoin node restart once when this setting is applied.
 - It connects over the local network using the node's RPC cookie — there's no password to copy and nothing to configure.
 

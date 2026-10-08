@@ -20,7 +20,7 @@ export const manifest = setupManifest({
         },
       },
       arch: ['x86_64', 'aarch64'],
+      emulateMissing: false,
     },
   },
-  dependencies: {},
 })

@@ -18,18 +18,22 @@ Freshly scaffolded? Work the
 guide page, not a file in this repo — read it, don't copy it in.
 
 Keep `README.md` (technical reference for an AI support or administering agent) and
-`instructions.md` (end-user docs) in sync with your changes.
+`instructions.md` (end-user docs) in sync with your changes. This file restates neither:
+whoever changes the package has both, so it carries only what they don't — repo mechanics,
+a change that looks right and is not, where the next thing gets added, a naming trap, a
+build or test invocation particular to this repo.
 
-**Bugs and feature requests are GitHub issues on this repo** — file them as you find them.
+**Fix a defect you spot rather than reporting it** — you have the package open and the
+context to be sure. File **a GitHub issue on this repo** only when the call isn't yours to
+make: you can't pin the cause down, two defensible fixes exist, or it's too large to ride on
+the work in hand. An open issue is a report, not a queue — implement one when you're asked
+to or when it's labelled `Approved`, then close it with `Closes #<n>`.
+
 Don't record work in the repo instead: no `TODO.md`, no `NOTES.md`, no `PLAN.md`. What you
 verified, tried, and decided belongs in the commit message and the PR body.
 
 ## This repo
 
-- **UI only.** It ships no bitcoind and hard-depends on `bitcoind` for RPC + ZMQ. `BITCOIND_EXTERNAL_MODE=true` is what stops the app trying to manage a node.
 - **`ssl: false` on the RPC lookup only.** Bitcoin binds RPC as `protocol: 'http'`, which publishes both a plaintext and a TLS address; the ZMQ bindings publish a single plaintext leg each, where passing `ssl` selects nothing.
-- **`.startos` DNS is deprecated — never reintroduce it.** Host ids and internal ports come from `bitcoin-knots-startos/startos/utils`, not literals.
+- **`.startos` DNS is deprecated — never reintroduce it.** Host ids and internal ports come from `bitcoin-core-startos/startos/utils`, not literals.
 - **Omit an env var when its address is null.** The `.const()`s heal the UI with one restart on Bitcoin install/uninstall and cause none on a Bitcoin update; a fabricated address would defeat both.
-- **The ZMQ task is raised on `bitcoind`, not here**, pre-filled and `accept`-locked to `{ zmqEnabled: true }`, with `once: false` so it re-raises if ZMQ is later turned off. Live block and tx updates depend on it.
-- **The fork exists so the `.startos` removal could ship.** Its RPC client and both ZMQ subscribers take the host from `BITCOIND_IP` rather than the deprecated overlay DNS name. Mirror anything sent to Retropex into our fork.
-- **The licence is PolyForm Noncommercial**, not an OSI licence — keep that accurate in the manifest and the docs.

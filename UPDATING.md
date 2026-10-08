@@ -29,4 +29,4 @@ This package builds the UI from [`Start9-Community/umbrel-bitcoin`](https://gith
    ```
 
 2. Rebuild (`make`) and verify the UI starts and reaches the bitcoind dependency.
-3. Bump `version` / `releaseNotes` in `startos/versions/current.ts` per [CONTRIBUTING.md](./CONTRIBUTING.md).
+3. Bump `version` / `releaseNotes` in `startos/versions/current.ts` per the packaging guide's [Versions](https://docs.start9.com/packaging/versions.html) page.

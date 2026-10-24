@@ -1,4 +1,4 @@
-FROM node:20-slim AS deps
+FROM node:22.23.4-bookworm-slim AS deps
 WORKDIR /repo
 
 COPY umbrel-bitcoin/package*.json ./
@@ -16,7 +16,7 @@ COPY ./umbrel-bitcoin/ .
 RUN tsc -b libs/shared-types libs/settings apps/backend \
  && npm run --workspace apps/ui build
 
-FROM node:20-bookworm-slim AS runtime
+FROM node:22.23.4-bookworm-slim AS runtime
 WORKDIR /app
 
 RUN apt update && \

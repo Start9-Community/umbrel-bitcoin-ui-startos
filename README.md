@@ -55,12 +55,12 @@ One image, built here from a vendored fork.
 
 One volume, plus a read-only view of the node's.
 
-| Volume                | Mount Point  | Purpose                           |
-| --------------------- | ------------ | --------------------------------- |
-| `main`                | `/root`      | Whatever the application persists |
-| Bitcoin's `main` (ro) | `/mnt/knots` | The node's RPC cookie             |
+| Volume                  | Mount Point  | Purpose                           |
+| ----------------------- | ------------ | --------------------------------- |
+| `main`                  | `/root`      | Whatever the application persists |
+| Bitcoin's `public` (ro) | `/mnt/knots` | The node's RPC cookie             |
 
-**The only thing read from the node's volume is its RPC cookie**, straight off the mount rather than copied — so a cookie regenerated on the node's next start is picked up without anything going stale.
+**The node's `public` volume holds the RPC cookie it publishes for dependents and none of its chain or wallet data.** The cookie is read straight off the mount rather than copied — so a cookie regenerated on the node's next start is picked up without anything going stale.
 
 There is very little in the package's own volume: the chain, the mempool and the peers all belong to the node.
 
@@ -78,9 +78,9 @@ Four of those values are **resolved at start rather than fixed**: the node's add
 
 One, and it is required.
 
-| Dependency | Required | Version                                                                                          | Health checks required | Mounted                           | Why                    |
-| ---------- | -------- | ------------------------------------------------------------------------------------------------ | ---------------------- | --------------------------------- | ---------------------- |
-| Bitcoin    | Yes      | 28.4:29, 29.4:16, 30.3:16 or 31.1:16 and later, per major line; Bitcoin Knots (pre-RDTS) 29.3:29+ | `bitcoind`             | `main`, read-only at `/mnt/knots` | Everything it displays |
+| Dependency | Required | Version                                                                                       | Health checks required | Mounted                             | Why                    |
+| ---------- | -------- | --------------------------------------------------------------------------------------------- | ---------------------- | ----------------------------------- | ---------------------- |
+| Bitcoin    | Yes      | 28.4:42, 29.5:4, 30.4:4 or 31.2:4 and later, per major line; Bitcoin Knots (pre-RDTS) 29.3:33+ | `bitcoind`             | `public`, read-only at `/mnt/knots` | Everything it displays |
 
 **This package also configures the node on your behalf.** The live block and transaction updates depend on ZeroMQ, which Bitcoin does not enable by default — so the package raises a `critical` task **on the Bitcoin package**, pre-filled to turn ZeroMQ on and locked to that single change.
 
@@ -165,7 +165,7 @@ architectures:
 subcontainers:
   - umbrel-bitcoin-ui-sub
 volumes:
-  main: /root # little state; bitcoind's main is read-only at /mnt/knots for the cookie
+  main: /root # little state; bitcoind's public volume is read-only at /mnt/knots for the cookie
 file_models: [] # everything is environment, composed at start
 startos_managed_env_vars:
   - BITCOIND_EXTERNAL_MODE
@@ -175,7 +175,7 @@ startos_managed_env_vars:
   - ZMQ_HASHTX_PORT
   - RPC_COOKIE
 dependencies:
-  - bitcoind # required, kind: running, healthChecks: [bitcoind], cookie via a read-only mount; >=28.4:29 / 29.4:16 / 30.3:16 / 31.1:16 per major line, or Knots (pre-RDTS) >=29.3:29
+  - bitcoind # required, kind: running, healthChecks: [bitcoind], cookie via a read-only mount of its public volume; >=28.4:42 / 29.5:4 / 30.4:4 / 31.2:4 per major line, or Knots (pre-RDTS) >=29.3:33
 interfaces:
   ui: { type: ui, port: 3000 } # no authentication of any kind
 actions: []

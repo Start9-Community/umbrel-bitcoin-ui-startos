@@ -78,8 +78,8 @@ Four of those values are **resolved at start rather than fixed**: the node's add
 
 One, and it is required.
 
-| Dependency | Required | Version                                                                                       | Health checks required | Mounted                             | Why                    |
-| ---------- | -------- | --------------------------------------------------------------------------------------------- | ---------------------- | ----------------------------------- | ---------------------- |
+| Dependency | Required | Version                                                                                        | Health checks required | Mounted                             | Why                    |
+| ---------- | -------- | ---------------------------------------------------------------------------------------------- | ---------------------- | ----------------------------------- | ---------------------- |
 | Bitcoin    | Yes      | 28.4:42, 29.5:4, 30.4:4 or 31.2:4 and later, per major line; Bitcoin Knots (pre-RDTS) 29.3:33+ | `bitcoind`             | `public`, read-only at `/mnt/knots` | Everything it displays |
 
 **This package also configures the node on your behalf.** The live block and transaction updates depend on ZeroMQ, which Bitcoin does not enable by default — so the package raises a `critical` task **on the Bitcoin package**, pre-filled to turn ZeroMQ on and locked to that single change.
@@ -134,6 +134,8 @@ One check, on the only daemon.
 
 It reports that the dashboard is serving. **It says nothing about the node**: an unresolved address, ZeroMQ disabled, or a node that is still syncing all show a green check and an empty or stale dashboard.
 
+While the installed Bitcoin is too old to publish its `public` volume, the dashboard mounts nothing from it and runs no daemon: a lone `bitcoin` check, "Bitcoin Connection", fails and asks for Bitcoin to be updated. The installed manifest is watched, so updating Bitcoin starts the dashboard normally.
+
 ## Backups and Restore
 
 The `main` volume is copied wholesale — `sdk.Backups.ofVolumes('main')`.
@@ -186,4 +188,5 @@ tasks:
     locked_to: { zmqEnabled: true }
 health_checks:
   - primary # displayed "Web Interface"; says nothing about the node
+  - bitcoin # displayed "Bitcoin Connection"; only while Bitcoin is too old to publish its public volume
 ```

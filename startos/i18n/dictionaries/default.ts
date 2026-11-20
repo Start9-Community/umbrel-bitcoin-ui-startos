@@ -6,6 +6,8 @@ const dict = {
   'Web Interface': 1,
   'The web interface is ready': 2,
   'The web interface is not ready': 3,
+  'Bitcoin Connection': 7,
+  'Update Bitcoin so Umbrel Bitcoin UI can connect to it': 8,
 
   // interfaces.ts
   'Web UI': 4,

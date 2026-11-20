@@ -18,6 +18,8 @@ StartOS handles the wiring for you:
 2. Start the service. Once your Bitcoin node is reachable, the **Web Interface** health check turns green.
 3. Open the service's **Dashboard** tab and click the **Web UI** interface to open the dashboard in your browser.
 
+If the **Bitcoin Connection** check asks you to update Bitcoin, install Bitcoin's update; Umbrel Bitcoin UI starts on its own once it is done.
+
 There is no setup wizard, admin password, or configuration to fill in — the UI is ready as soon as it can reach your node.
 
 ## Documentation

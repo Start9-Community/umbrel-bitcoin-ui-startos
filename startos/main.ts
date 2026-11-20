@@ -17,6 +17,29 @@ const bridgePort = (address: string | null) => address?.split(':')[1]
 export const main = sdk.setupMain(async ({ effects }) => {
   console.info(i18n('Starting Umbrel UI.'))
 
+  // An older Bitcoin lacks the public volume, and mounting a missing volume fails the start.
+  const hasRpcVolume = await sdk
+    .getServiceManifest(effects, 'bitcoind', (m) =>
+      m?.volumes.includes(rpcVolumeId),
+    )
+    .const()
+  if (hasRpcVolume === false) {
+    return sdk.Daemons.of(effects).addHealthCheck('bitcoin', {
+      ready: {
+        display: i18n('Bitcoin Connection'),
+        gracePeriod: 0,
+        trigger: sdk.trigger.onceTrigger,
+        fn: () => ({
+          result: 'failure',
+          message: i18n(
+            'Update Bitcoin so Umbrel Bitcoin UI can connect to it',
+          ),
+        }),
+      },
+      requires: [],
+    })
+  }
+
   // Every bridge address is the OS gateway plus the port StartOS assigned to
   // that binding, which only prefers — never guarantees — Bitcoin's own port
   // number, so each one has to be carried through. RPC, ZMQ block and ZMQ tx are

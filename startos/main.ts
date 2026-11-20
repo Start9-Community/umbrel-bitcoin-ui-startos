@@ -3,8 +3,10 @@ import { uiPort } from './utils'
 import { i18n } from './i18n'
 import { manifest } from 'bitcoin-core-startos/startos/manifest'
 import {
+  rpcCookieName,
   rpcHostId,
   rpcPort,
+  rpcVolumeId,
   zmqHostId,
   zmqPortBlock,
   zmqPortTransaction,
@@ -48,7 +50,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
         })
         .mountDependency<typeof manifest>({
           dependencyId: 'bitcoind',
-          volumeId: 'main',
+          volumeId: rpcVolumeId,
           subpath: null,
           mountpoint: '/mnt/knots',
           readonly: true,
@@ -68,7 +70,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
         ...(zmqTxAddress
           ? [`ZMQ_HASHTX_PORT=${bridgePort(zmqTxAddress)}`]
           : []),
-        'RPC_COOKIE=/mnt/knots/.cookie',
+        `RPC_COOKIE=/mnt/knots/${rpcCookieName}`,
         'node',
         '/app/dist/server.js',
       ],
